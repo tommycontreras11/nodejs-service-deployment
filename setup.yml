@@ -1,0 +1,10 @@
+---
+- name: Setup Node.js server
+  hosts: servers
+  become: true
+
+  roles:
+    - base
+    - ssh
+    - nginx
+    - app
