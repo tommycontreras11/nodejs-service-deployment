@@ -12,7 +12,11 @@
       - unzip
       - tar
       - git
-      - fail2ban
+    state: present
+
+- name: Install fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
     state: present
 
 - name: Ensure fail2ban is running
