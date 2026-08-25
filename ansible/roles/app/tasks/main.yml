@@ -44,3 +44,25 @@
 - name: Display npm version
   ansible.builtin.debug:
     msg: "npm version: {{ npm_version.stdout }}"
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: /opt/nodejs-service-deployment
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+
+- name: Clone application repository
+  ansible.builtin.git:
+    repo: "https://github.com/tommycontreras11/nodejs-service-deployment.git"
+    dest: /opt/nodejs-service-deployment
+    version: master
+    force: true
+  become_user: ubuntu
+
+- name: Install application dependencies
+  ansible.builtin.command:
+    cmd: npm install
+    chdir: /opt/nodejs-service-deployment/app
+  become_user: ubuntu

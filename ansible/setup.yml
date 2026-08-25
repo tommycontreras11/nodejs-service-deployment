@@ -5,4 +5,6 @@
 
   roles:
     - base
-    - app
+    - role: app
+      tags:
+        - app
