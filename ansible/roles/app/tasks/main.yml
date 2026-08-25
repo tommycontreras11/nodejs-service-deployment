@@ -66,3 +66,34 @@
     cmd: npm install
     chdir: /opt/nodejs-service-deployment/app
   become_user: ubuntu
+
+- name: Create systemd service for Node.js application
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/nodejs-service.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Node.js Service
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=ubuntu
+      WorkingDirectory=/opt/nodejs-service-deployment/app
+      ExecStart=/usr/bin/node src/index.js
+      Restart=always
+      RestartSec=5
+      Environment=NODE_ENV=production
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start Node.js application
+  ansible.builtin.systemd:
+    name: nodejs-service
+    state: started
+    enabled: true
