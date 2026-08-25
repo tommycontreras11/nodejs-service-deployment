@@ -24,3 +24,17 @@
     name: fail2ban
     state: started
     enabled: true
+
+- name: Allow HTTP traffic
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 80
+    ctstate: NEW
+    jump: ACCEPT
+    rule_num: 5
+
+- name: Save iptables rules
+  ansible.builtin.command:
+    cmd: netfilter-persistent save
+  changed_when: false

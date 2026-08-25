@@ -1,0 +1,49 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Configure Nginx as reverse proxy
+  ansible.builtin.copy:
+    dest: /etc/nginx/sites-available/nodejs-service
+    mode: "0644"
+    content: |
+      server {
+          listen 80;
+          server_name _;
+
+          location / {
+              proxy_pass http://127.0.0.1:3000;
+              proxy_http_version 1.1;
+
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+          }
+      }
+
+- name: Enable Node.js service Nginx configuration
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/nodejs-service
+    dest: /etc/nginx/sites-enabled/nodejs-service
+    state: link
+    force: true
+
+- name: Remove default Nginx configuration
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Test Nginx configuration
+  ansible.builtin.command:
+    cmd: nginx -t
+  changed_when: false
+
+- name: Restart Nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
+    enabled: true

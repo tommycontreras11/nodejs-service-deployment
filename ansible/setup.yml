@@ -5,6 +5,11 @@
 
   roles:
     - base
+
     - role: app
       tags:
         - app
+    
+    - role: nginx
+      tags:
+        - nginx
