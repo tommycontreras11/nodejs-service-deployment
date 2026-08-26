@@ -5,7 +5,7 @@ const PORT = 3000
 const app = express()
 
 app.get("/", (_req, res) => {
-  res.status(200).send("Hello, World 3!")
+  res.status(200).send("Hello from CI/CD!")
 })
 
 app.listen(PORT, () => {
