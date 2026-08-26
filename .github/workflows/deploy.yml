@@ -1,0 +1,39 @@
+name: Deploy with Ansible
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/oracle-cloud.key
+          chmod 600 ~/.ssh/oracle-cloud.key
+          ssh-keyscan -H 157.151.214.12 >> ~/.ssh/known_hosts
+
+      - name: Install Ansible
+        run: |
+          python3 -m pip install ansible
+
+      - name: Verify SSH connection
+        run: |
+          ssh \
+            -i ~/.ssh/oracle-cloud.key \
+            ubuntu@157.151.214.12 \
+            "echo SSH connection successful"
+
+      - name: Run Ansible playbook
+        working-directory: ansible
+        run: |
+          ansible-playbook setup.yml \
+            -i inventory.ini \
+            --private-key ~/.ssh/oracle-cloud.key
