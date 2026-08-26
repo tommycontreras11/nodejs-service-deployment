@@ -34,6 +34,6 @@ jobs:
       - name: Run Ansible playbook
         working-directory: ansible
         run: |
-          ansible-playbook setup.yml \
+          ansible-playbook node_service.yml \
             -i inventory.ini \
             --private-key ~/.ssh/oracle-cloud.key
