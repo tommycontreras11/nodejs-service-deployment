@@ -60,6 +60,7 @@
     version: master
     force: true
   become_user: ubuntu
+  notify: Restart Node.js application
 
 - name: Install application dependencies
   ansible.builtin.command:
@@ -92,8 +93,7 @@
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: Start Node.js application
+- name: Ensure Node.js application is enabled
   ansible.builtin.systemd:
     name: nodejs-service
-    state: started
     enabled: true
